@@ -1,0 +1,78 @@
+#!/bin/sh
+
+# Name: updateGxdSolrIndexDefinitions
+# Purpose: to update the index definitions for an GXD Solr instance at a
+#	location specified on the command-line
+
+USAGE='Usage: $0 <target directory> <installation name>
+'
+
+# ensure that we are not executing this script via a symbolic link
+if [ -h $0 ]; then
+    echo "Error: cannot invoke $0 as a symbolic link"
+    exit 1
+fi
+
+# ensure that we are in the top level directory of the solrbuilder product
+
+BASENAME=`basename $0`
+NOTBASENAME=`echo $0 | sed "s/${BASENAME}$//"`
+
+if [ "${NOTBASENAME}" != "" ]; then
+    cd ${NOTBASENAME}
+fi
+SOURCE_DIR=`pwd`
+
+INSTALL_DIR=`echo $1 | sed "s:/$::"`
+INSTALL_NAME=$2
+
+multicoreDir=multicore-${INSTALL_NAME}
+
+###--- functions ---###
+
+checkParameters() {
+    if [ $# -lt 2 ]; then
+	echo $USAGE
+	echo "Error: too few parameters"
+	exit 1
+    fi
+}
+
+fillMulticoreDirectory() {
+    for subdir in `ls defs/`
+    do
+	if [ "${subdir}" != "default" ]; then
+	    if [ -d defs/${subdir} ]; then
+		dirName="${INSTALL_DIR}/${multicoreDir}/${subdir}"
+		if [ ! -d ${dirName} ]; then
+		    mkdir ${dirName}
+		    if [ $? -ne 0 ]; then
+			    echo "Failed to create ${dirName}"
+			    exit 1
+		    fi
+		    mkdir ${dirName}/bin
+		    mkdir ${dirName}/conf
+		    mkdir ${dirName}/data
+		    echo "Created index directory: ${dirName}"
+		fi
+
+		cp -r defs/default/* ${dirName}/conf
+		echo "Copied defaults into: ${dirName}/conf"
+
+		cp -r defs/${subdir}/* ${dirName}/conf
+		echo "Copied overrides into: ${dirName}/conf"
+
+		# copy the default solrconfig.xml, but set the data directory to the name of the sub directory
+		cp defs/solrconfig.xml ${dirName}/conf/solrconfig.xml
+		echo "Copied default solrconfig.xml into: ${dirName}/conf"
+		
+	    fi
+	fi
+    done
+    cp defs/solr.xml ${INSTALL_DIR}/${multicoreDir}
+}
+
+###--- main program ---###
+
+checkParameters $*
+fillMulticoreDirectory

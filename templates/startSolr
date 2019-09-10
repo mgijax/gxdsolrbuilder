@@ -1,0 +1,34 @@
+#!/bin/sh
+
+if [ "${MGICONFIG}" = "" ]
+then
+    MGICONFIG=/usr/local/mgi/live/mgiconfig
+    export MGICONFIG
+fi
+
+. ${MGICONFIG}/master.config.sh
+
+MEM_MIN=1536m
+MEM_MAX=1536m
+
+if [ "${SOLR_MEM_MIN}" != "" ]
+then
+    MEM_MIN=${SOLR_MEM_MIN}
+fi
+if [ "${SOLR_MEM_MAX}" != "" ]
+then
+    MEM_MAX=${SOLR_MEM_MAX}
+fi
+
+LOGGING=""
+
+if [ $# -gt 0 ]; then
+	if [ "$1" = "log" ]; then
+		LOGGING="-Djava.util.logging.config.file=logging.properties"
+	fi
+fi
+
+cd {INSTALL_DIR}
+${JAVA_HOME}/bin/java -Xms${MEM_MIN} -Xmx${MEM_MAX} -Dsolr.solr.home=multicore-{INSTALL_NAME} -DSTOP.PORT={SHUTDOWN_PORT} -DSTOP.KEY={SHUTDOWN_PHRASE} ${LOGGING} -jar start.jar &
+echo $! > solr.pid
+

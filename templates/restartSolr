@@ -1,0 +1,6 @@
+#!/bin/sh
+
+echo "stopping existing GXD solr"
+./stopSolr > /dev/null 2>&1
+echo "starting GXD solr, redirecting output to null; logs in logs/solr.log"
+./startSolr > /dev/null 2>&1

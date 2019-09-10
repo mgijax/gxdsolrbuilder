@@ -1,0 +1,154 @@
+#!/bin/sh
+
+# Name: buildGxdSolr
+# Purpose: to build a directory structure for an GXD Solr instance at a
+#	location specified on the command-line
+
+USAGE='Usage: $0 <target directory> <installation name> <solr port> <shutdown port>
+'
+
+# ensure that we are not executing this script via a symbolic link
+if [ -h $0 ]; then
+    echo "Error: cannot invoke $0 as a symbolic link"
+    exit 1
+fi
+
+# ensure that we are in the top level directory of the solrbuilder product
+
+BASENAME=`basename $0`
+NOTBASENAME=`echo $0 | sed "s/${BASENAME}$//"`
+
+if [ "${NOTBASENAME}" != "" ]; then
+    cd ${NOTBASENAME}
+fi
+SOURCE_DIR=`pwd`
+
+INSTALL_DIR=`echo $1 | sed "s:/$::"`
+INSTALL_NAME=$2
+SOLR_PORT=$3
+SHUTDOWN_PORT=$4
+SHUTDOWN_PHRASE=g0away_${INSTALL_NAME}
+
+###--- functions ---###
+
+checkParameters() {
+    if [ $# -lt 4 ]; then
+	echo $USAGE
+	echo "Error: too few parameters"
+	exit 1
+    fi
+}
+
+makeTopLevelDirectory() {
+    if [ ! -d ${INSTALL_DIR} ]; then
+	mkdir ${INSTALL_DIR}
+	echo "Created new directory: ${INSTALL_DIR}"
+    else
+	if [ -f ${INSTALL_DIR}/solr.pid ]; then
+		pid=`cat ${INSTALL_DIR}/solr.pid`
+		echo "Cannot rebuild a running Solr (pid ${runningPort})"
+		exit 1
+	fi
+	rm -rf ${INSTALL_DIR}/*
+	echo "Cleaned out existing directory: ${INSTALL_DIR}"
+    fi
+}
+
+makeDirectory() {
+    if [ ! -d $1 ]; then
+	mkdir $1
+	echo "Created new directory: $1"
+    else
+	echo "Error: Found unexpected directory: $1"
+	exit 1
+    fi
+}
+
+fillLibDirectory() {
+    cp ${SOURCE_DIR}/lib/jetty* ${INSTALL_DIR}/lib
+    cp ${SOURCE_DIR}/lib/servlet* ${INSTALL_DIR}/lib
+    cp ${SOURCE_DIR}/lib/ant* ${INSTALL_DIR}/lib/jsp-2.1
+    cp ${SOURCE_DIR}/lib/core* ${INSTALL_DIR}/lib/jsp-2.1
+    cp ${SOURCE_DIR}/lib/jsp* ${INSTALL_DIR}/lib/jsp-2.1
+    cp ${SOURCE_DIR}/lib/jcl* ${INSTALL_DIR}/lib/ext
+    cp ${SOURCE_DIR}/lib/jul* ${INSTALL_DIR}/lib/ext
+    cp ${SOURCE_DIR}/lib/log4j* ${INSTALL_DIR}/lib/ext
+    cp ${SOURCE_DIR}/lib/slf4j* ${INSTALL_DIR}/lib/ext
+    echo "Populated lib directory: ${INSTALL_DIR}/lib"
+}
+
+fillWebappsDirectory() {
+    cp ${SOURCE_DIR}/webapps/solr.war ${INSTALL_DIR}/webapps
+    echo "Populated webapps directory: ${INSTALL_DIR}/webapps"
+}
+
+fillEtcDirectory() {
+    cp ${SOURCE_DIR}/templates/webdefault.xml ${INSTALL_DIR}/etc
+    cat ${SOURCE_DIR}/templates/jetty.xml | sed "s/{JETTY_PORT}/${SOLR_PORT}/" > ${INSTALL_DIR}/etc/jetty.xml
+    echo "Populated etc directory: ${INSTALL_DIR}/etc"
+}
+
+fillContextsDirectory() {
+    cp ${SOURCE_DIR}/templates/solr-jetty-context.xml ${INSTALL_DIR}/contexts
+    echo "Populated contexts directory: ${INSTALL_DIR}/contexts"
+}
+
+fillResourcesDirectory() {
+    cp ${SOURCE_DIR}/templates/log4j.properties ${INSTALL_DIR}/resources
+    echo "Populated resources directory: ${INSTALL_DIR}/resources"
+}
+
+updateIndexDefinitions() {
+    ./updateGxdSolrIndexDefinitions ${INSTALL_DIR} ${INSTALL_NAME}
+    if [ $? -ne 0 ]; then
+	    echo "Failed to populate GXD Solr index definitions"
+	    exit 1
+    fi
+    echo "Populated GXD Solr index definitions: ${INSTALL_DIR}/multicore-${INSTALL_NAME}"
+}
+
+fillTopLevelDirectory() {
+    cp ${SOURCE_DIR}/lib/start.jar ${INSTALL_DIR}
+    
+    SHORTNAME=`uname -n`
+    MACHINE=`nslookup ${SHORTNAME} | grep "^Name" | awk '{print $2}'`
+    URL="http://${MACHINE}:${SOLR_PORT}/solr"
+
+    echo "${URL}" > ${INSTALL_DIR}/solr.url
+    echo "${SOLR_PORT}" > ${INSTALL_DIR}/solr.port
+
+    for file in startSolr stopSolr logging.properties
+    do
+	cat ${SOURCE_DIR}/templates/${file} \
+	    | sed "s:{INSTALL_DIR}:${INSTALL_DIR}:" \
+	    | sed "s/{INSTALL_NAME}/${INSTALL_NAME}/" \
+	    | sed "s/{SHUTDOWN_PORT}/${SHUTDOWN_PORT}/" \
+	    | sed "s/{SHUTDOWN_PHRASE}/${SHUTDOWN_PHRASE}/" \
+	    	> ${INSTALL_DIR}/${file}
+
+	# executable only by user, readable by group
+	chmod 740 ${INSTALL_DIR}/${file}
+    done
+
+    echo "Populated top-level directory: ${INSTALL_DIR}"
+}
+
+###--- main program ---###
+
+checkParameters $*
+multicoreDir=multicore-${INSTALL_NAME}
+
+makeTopLevelDirectory
+
+for subdir in data etc lib lib/jsp-2.1 lib/ext logs ${multicoreDir} webapps work contexts resources
+do
+	makeDirectory ${INSTALL_DIR}/${subdir}
+done
+
+fillLibDirectory
+fillWebappsDirectory
+fillEtcDirectory
+fillContextsDirectory
+fillResourcesDirectory
+updateIndexDefinitions
+fillTopLevelDirectory

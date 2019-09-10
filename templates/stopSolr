@@ -1,0 +1,30 @@
+#!/bin/sh
+
+cd {INSTALL_DIR}
+${JAVA_HOME}/bin/java -Dsolr.solr.home=multicore-{INSTALL_NAME} -DSTOP.PORT={SHUTDOWN_PORT} -DSTOP.KEY={SHUTDOWN_PHRASE} -jar start.jar --stop &
+
+PID=`cat solr.pid | awk '{print $1}'`
+
+TRIES=0
+MSG=
+
+while [ -z "${MSG}" ]
+do
+	COUNT=`ps -aef | grep ${PID} | grep -v 'grep' | wc -l`
+	if [ ${COUNT} -eq 0 ]; then
+		MSG="Clean shutdown succeeded for process ${PID}"
+	else
+		TRIES=`expr ${TRIES} + 1`
+		if [ ${TRIES} -gt 5 ]; then
+			kill -9 ${PID}
+			MSG="Clean shutdown failed; killed process ${PID}"
+		fi
+		sleep 2
+	fi
+done
+
+if [ -f solr.pid ]; then
+	rm solr.pid
+fi
+
+echo ${MSG}
