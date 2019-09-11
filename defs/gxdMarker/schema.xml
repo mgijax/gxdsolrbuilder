@@ -520,14 +520,14 @@
    -->
    <field name="uniqueKey" type="string" indexed="true" stored="true" multiValued="false" />
    <field name="markerKey" type="int" indexed="true" stored="true" multiValued="false" />
-   <field name="marker_Mgiid" type="string" indexed="true" stored="true" multiValued="false" />
-   <field name="marker_symbol" type="string" indexed="true" stored="true" multiValued="false" />
-   <field name="marker_name" type="string" indexed="true" stored="true" multiValued="false" />
+   <field name="markerMgiid" type="string" indexed="true" stored="true" multiValued="false" />
+   <field name="markerSymbol" type="string" indexed="true" stored="true" multiValued="false" />
+   <field name="markerName" type="string" indexed="true" stored="true" multiValued="false" />
    <field name="nomenclature" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="markerType" type="string" indexed="true" stored="true" multiValued="false" />
    <field name="byMrkSymbol" type="int" indexed="true" stored="true" multiValued="false" />
    <field name="byLocation" type="int" indexed="true" stored="true" multiValued="false" />
-   <field name="chromosome" type="string" indexed="true" stored="true" multiValued="false" />
+   <field name="chr" type="string" indexed="true" stored="true" multiValued="false" />
    <field name="cM" type="string" indexed="true" stored="true" multiValued="false" />
    <field name="startCoord" type="double" indexed="true" stored="true" multiValued="false" />
    <field name="endCoord" type="double" indexed="true" stored="true" multiValued="false" />
