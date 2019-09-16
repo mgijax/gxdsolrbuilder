@@ -272,6 +272,19 @@
       </analyzer>
     </fieldType>
 
+    <fieldType name="nomen" class="solr.TextField" positionIncrementGap="1000">
+      <analyzer type="index">
+        <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+        <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" splitOnNumerics="0" catenateAll="0" splitOnCaseChange="0" preserveOriginal="1" stemEnglishPossessive="0"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+      </analyzer>
+      <analyzer type="query">
+        <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+        <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" splitOnNumerics="0" catenateAll="0" splitOnCaseChange="0" preserveOriginal="1" stemEnglishPossessive="0"/>
+      </analyzer>
+    </fieldType>
 
     <fieldType name="autocomplete_text" class="solr.TextField" positionIncrementGap="100">
       <analyzer type="index">
@@ -523,7 +536,7 @@
    <field name="markerMgiid" type="string" indexed="true" stored="true" multiValued="false" />
    <field name="markerSymbol" type="string" indexed="true" stored="true" multiValued="false" />
    <field name="markerName" type="string" indexed="true" stored="true" multiValued="false" />
-   <field name="nomenclature" type="string" indexed="true" stored="true" multiValued="true" />
+   <field name="nomenclature" type="nomen" indexed="true" stored="true" multiValued="true" />
    <field name="markerType" type="string" indexed="true" stored="true" multiValued="false" />
    <field name="byMrkSymbol" type="int" indexed="true" stored="true" multiValued="false" />
    <field name="byLocation" type="int" indexed="true" stored="true" multiValued="false" />
@@ -541,6 +554,15 @@
    <field name="ages" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="isWildType" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="jNum" type="string" indexed="true" stored="true" multiValued="true" />
+   <field name="detectionLevel" type="string" indexed="true" stored="true" multiValued="true" />
+   <field name="mutatedIn" type="nomen" indexed="true" stored="false" multiValued="true" />
+
+   <!-- include annotated terms plus their ancestor terms -->
+   <field name="mpHeaders" type="string" indexed="true" stored="true" multiValued="true" required="false" />
+   <field name="goHeaders" type="string" indexed="true" stored="true" multiValued="true" required="false" />
+   <field name="doHeaders" type="string" indexed="true" stored="true" multiValued="true" required="false" />
+   <field name="featureTypes" type="string" indexed="true" stored="true" multiValued="true" required="false" />
+
 
    <!-- catchall field, containing all other searchable text fields (implemented
         via copyField further on in this schema  -->
