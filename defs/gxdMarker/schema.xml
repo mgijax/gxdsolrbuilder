@@ -550,6 +550,7 @@
    <field name="resultType" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="theilerStage" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="emapsId" type="string" indexed="true" stored="true" multiValued="true" />
+   <field name="structureId" type="string" indexed="true" stored="false" multiValued="true" />
    <field name="isExpressed" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="ages" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="isWildType" type="string" indexed="true" stored="true" multiValued="true" />
@@ -563,6 +564,8 @@
    <field name="doHeaders" type="string" indexed="true" stored="true" multiValued="true" required="false" />
    <field name="featureTypes" type="string" indexed="true" stored="true" multiValued="true" required="false" />
 
+   <!-- includes annotated IDs and their ancestor IDs for DO, GO, MP vocabs -->
+   <field name="annotation" type="string" indexed="true" stored="false" multiValued="true" required="false" />
 
    <!-- catchall field, containing all other searchable text fields (implemented
         via copyField further on in this schema  -->
