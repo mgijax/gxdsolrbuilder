@@ -70,23 +70,14 @@
        exceed a certain size (in characters).
     -->
 
-<fieldType name="strucSyn" class="solr.TextField" positionIncrementGap="100">
+<fieldType name="edgytext" class="solr.TextField" positionIncrementGap="100">
  <analyzer type="index">
-   <charFilter class="solr.PatternReplaceCharFilterFactory" pattern="(')" replacement=""/>
-   <charFilter class="solr.PatternReplaceCharFilterFactory" pattern="(-)" replacement=" "/>
-   <charFilter class="solr.PatternReplaceCharFilterFactory" pattern="([^a-zA-Z0-9\s])" replacement=""/>
-   <tokenizer class="solr.WhitespaceTokenizerFactory"/>
-   <filter class="solr.StopFilterFactory" ignoreCase="true"
-                words="stopwords.txt" enablePositionIncrements="true" />
+   <tokenizer class="solr.KeywordTokenizerFactory"/>
    <filter class="solr.LowerCaseFilterFactory"/>
+   <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" />
  </analyzer>
  <analyzer type="query">
-   <charFilter class="solr.PatternReplaceCharFilterFactory" pattern="(')" replacement=""/>
-   <charFilter class="solr.PatternReplaceCharFilterFactory" pattern="-" replacement=" "/>
-   <charFilter class="solr.PatternReplaceCharFilterFactory" pattern="([^a-zA-Z0-9\s])" replacement=""/>
-   <tokenizer class="solr.WhitespaceTokenizerFactory"/>
-   <filter class="solr.StopFilterFactory" ignoreCase="true"
-                words="stopwords.txt" enablePositionIncrements="true" />
+   <tokenizer class="solr.KeywordTokenizerFactory"/>
    <filter class="solr.LowerCaseFilterFactory"/>
  </analyzer>
 </fieldType>
@@ -255,8 +246,9 @@
                 enablePositionIncrements="true"
                 />
         -->
-        <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" catenateAll="0" splitOnCaseChange="1"/>
+        <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" splitOnNumerics="0" catenateAll="0" splitOnCaseChange="0" preserveOriginal="1"/>
         <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.SnowballPorterFilterFactory" language="English" protected="protwords.txt"/>
       </analyzer>
       <analyzer type="query">
         <tokenizer class="solr.WhitespaceTokenizerFactory"/>
@@ -268,7 +260,58 @@
                 />
         -->
         <filter class="solr.LowerCaseFilterFactory"/>
-        <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="0" catenateNumbers="0" catenateAll="0" splitOnCaseChange="1"/>
+        <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" splitOnNumerics="0" catenateAll="0" splitOnCaseChange="0" preserveOriginal="1"/>
+        <filter class="solr.SnowballPorterFilterFactory" language="English" protected="protwords.txt"/>
+      </analyzer>
+    </fieldType>
+
+    <fieldType name="anatomyNGram" class="solr.TextField" positionIncrementGap="1000">
+      <analyzer type="index">
+        <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+         <filter class="solr.StopFilterFactory"
+                ignoreCase="true"
+                words="stopwords.txt"
+                enablePositionIncrements="true"
+                />
+        <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" splitOnNumerics="0" catenateAll="0" splitOnCaseChange="0" preserveOriginal="1" stemEnglishPossessive="0"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+	<filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" />
+      </analyzer>
+      <analyzer type="query">
+        <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+        <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true"/>
+         <filter class="solr.StopFilterFactory"
+                ignoreCase="true"
+                words="stopwords.txt"
+                enablePositionIncrements="true"
+                />
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" splitOnNumerics="0" catenateAll="0" splitOnCaseChange="0" preserveOriginal="1" stemEnglishPossessive="0"/>
+      </analyzer>
+    </fieldType>
+
+    <fieldType name="anatomy" class="solr.TextField" positionIncrementGap="1000">
+      <analyzer type="index">
+        <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+         <filter class="solr.StopFilterFactory"
+                ignoreCase="true"
+                words="stopwords.txt"
+                enablePositionIncrements="true"
+                />
+        
+        <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" splitOnNumerics="0" catenateAll="0" splitOnCaseChange="0" preserveOriginal="1" stemEnglishPossessive="0"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+      </analyzer>
+      <analyzer type="query">
+        <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+        <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true"/>
+         <filter class="solr.StopFilterFactory"
+                ignoreCase="true"
+                words="stopwords.txt"
+                enablePositionIncrements="true"
+                />
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" splitOnNumerics="0" catenateAll="0" splitOnCaseChange="0" preserveOriginal="1" stemEnglishPossessive="0"/>
       </analyzer>
     </fieldType>
 
@@ -283,63 +326,6 @@
         <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true"/>
         <filter class="solr.LowerCaseFilterFactory"/>
         <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" splitOnNumerics="0" catenateAll="0" splitOnCaseChange="0" preserveOriginal="1" stemEnglishPossessive="0"/>
-      </analyzer>
-    </fieldType>
-
-    <fieldType name="autocomplete_text" class="solr.TextField" positionIncrementGap="100">
-      <analyzer type="index">
-        <tokenizer class="solr.WhitespaceTokenizerFactory"/>
-        <!-- <filter class="solr.StopFilterFactory"
-                ignoreCase="true"
-                words="stopwords.txt"
-                enablePositionIncrements="true"
-                /> -->
-        <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" catenateAll="0" splitOnCaseChange="1" preserveOriginal="1" stemEnglishPossessive="0" />
-        <filter class="solr.LowerCaseFilterFactory"/>
-      </analyzer>
-      <analyzer type="query">
-        <tokenizer class="solr.WhitespaceTokenizerFactory"/>
-        <!-- <filter class="solr.StopFilterFactory"
-                ignoreCase="true"
-                words="stopwords.txt"
-                enablePositionIncrements="true"
-                /> -->
-        <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true"/>
-        <filter class="solr.LowerCaseFilterFactory"/>
-        <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="0" catenateNumbers="0" catenateAll="0" splitOnCaseChange="1" preserveOriginal="1" stemEnglishPossessive="0" /> 
-      </analyzer>
-    </fieldType>
-
-    <fieldType name="ac_text" class="solr.TextField" positionIncrementGap="100">
-      <analyzer type="index">
-        <tokenizer class="solr.WhitespaceTokenizerFactory"/>
-        <!-- in this example, we will only use synonyms at query time
-        <filter class="solr.SynonymFilterFactory" synonyms="index_synonyms.txt" ignoreCase="true" expand="false"/>
-        -->
-        <!-- Case insensitive stop word removal.
-          add enablePositionIncrements=true in both the index and query
-          analyzers to leave a 'gap' for more accurate phrase queries.
-        -->
-        <!-- <filter class="solr.StopFilterFactory"
-                ignoreCase="true"
-                words="stopwords.txt"
-                enablePositionIncrements="true"
-                />
-        -->
-        <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" catenateAll="0" splitOnCaseChange="1"/>
-        <filter class="solr.LowerCaseFilterFactory"/>
-      </analyzer>
-      <analyzer type="query">
-        <tokenizer class="solr.WhitespaceTokenizerFactory"/>
-        <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true"/>
-        <!-- <filter class="solr.StopFilterFactory"
-                ignoreCase="true"
-                words="stopwords.txt"
-                enablePositionIncrements="true"
-                />
-        -->
-        <filter class="solr.LowerCaseFilterFactory"/>
-        <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="0" catenateNumbers="0" catenateAll="0" splitOnCaseChange="1"/>
       </analyzer>
     </fieldType>
 
@@ -486,14 +472,15 @@
     <fieldtype name="ignored" stored="false" indexed="false" multiValued="true" class="solr.StrField" /> 
 
     <fieldType name="geneticLocation"
-        class="solr.SpatialRecursivePrefixTreeFieldType"
-        multiValued="true"
-        geo="false"
-        worldBounds="-100000000000 -100000000000 100000000000 100000000000"
-        distErrPct="0"
-        maxDistErr="0.009"
-        units="degrees"
+	class="solr.SpatialRecursivePrefixTreeFieldType"
+	multiValued="true"
+	geo="false"
+	worldBounds="-100000000000 -100000000000 100000000000 100000000000"
+	distErrPct="0"
+	maxDistErr="0.009"
+	units="degrees"
     />
+
 
  </types>
 
@@ -525,47 +512,119 @@
        when adding a document.
    -->
 
-   <!--
-	Each document in this index represents either:
-	1. a strain name (with no synonym, just the approved name itself), or
-	2. a strain name / synonym pair, so we can match the synonym and learn
-		what name it corresponds to
-   -->
-   <field name="uniqueKey" type="string" indexed="true" stored="true" multiValued="false" />
-   <field name="markerKey" type="int" indexed="true" stored="true" multiValued="false" />
-   <field name="markerMgiid" type="string" indexed="true" stored="true" multiValued="false" />
-   <field name="markerSymbol" type="string" indexed="true" stored="true" multiValued="false" />
-   <field name="markerName" type="string" indexed="true" stored="true" multiValued="false" />
-   <field name="nomenclature" type="nomen" indexed="true" stored="true" multiValued="true" />
-   <field name="markerType" type="string" indexed="true" stored="true" multiValued="false" />
-   <field name="byMrkSymbol" type="int" indexed="true" stored="true" multiValued="false" />
-   <field name="byLocation" type="int" indexed="true" stored="true" multiValued="false" />
-   <field name="chr" type="string" indexed="true" stored="true" multiValued="false" />
-   <field name="cM" type="string" indexed="true" stored="true" multiValued="false" />
-   <field name="startCoord" type="double" indexed="true" stored="true" multiValued="false" />
-   <field name="endCoord" type="double" indexed="true" stored="true" multiValued="false" />
-   <field name="strand" type="string" indexed="true" stored="true" multiValued="false" />
-   <field name="mc" type="geneticLocation" indexed="true" stored="true" multiValued="false" />
-   <field name="assayType" type="string" indexed="true" stored="true" multiValued="true" />
-   <field name="resultType" type="string" indexed="true" stored="true" multiValued="true" />
-   <field name="theilerStage" type="string" indexed="true" stored="true" multiValued="true" />
-   <field name="emapsId" type="string" indexed="true" stored="true" multiValued="true" />
-   <field name="structureId" type="string" indexed="true" stored="false" multiValued="true" />
-   <field name="isExpressed" type="string" indexed="true" stored="true" multiValued="true" />
-   <field name="ages" type="string" indexed="true" stored="true" multiValued="true" />
-   <field name="isWildType" type="string" indexed="true" stored="true" multiValued="true" />
-   <field name="jNum" type="string" indexed="true" stored="true" multiValued="true" />
-   <field name="detectionLevel" type="string" indexed="true" stored="true" multiValued="true" />
-   <field name="mutatedIn" type="nomen" indexed="true" stored="false" multiValued="true" />
+    <!-- Marker level query fields -->
+   <field name="markerKey" type="string" indexed="true" stored="true" required="true" />
+   <field name="nomenclature" type="nomen" indexed="true" stored="false" multiValued="true" required="true" />
+   <field name="annotation" type="string" indexed="true" stored="false" multiValued="true" required="false" />
+   <!-- A field for more accurate wild card queries. Does not do any tokenising -->
+   <!--<field name="nomenclature_wc" type="text" indexed="true" stored="false" multiValued="true" required="true" />-->
+   <!-- Marker level summary -->
+   <field name="markerMgiid" type="string" indexed="true" stored="true" />
+   <field name="markerSymbol" type="string" indexed="true" stored="true" />
+   <field name="markerSymbolLower" type="textTight" indexed="true" />
+   <field name="markerName" type="string" indexed="false" stored="true" />
+   <field name="markerType" type="string" indexed="true" stored="true" />
+   <field name="chr" type="string" indexed="false" stored="true" />
+   <field name="cM" type="string" indexed="false" stored="true" />
+   <field name="cytoband" type="string" indexed="false" stored="true" />
+   <field name="startCoord" type="string" indexed="false" stored="true" />
+   <field name="endCoord" type="string" indexed="false" stored="true" />
+   <field name="strand" type="string" indexed="false" stored="true" />
+   <!-- mc = mouseCoordinate ; shortened for efficiency -->
+   <field name="mc" type="geneticLocation" indexed="true" stored="false" multiValued="true" />
 
-   <!-- include annotated terms plus their ancestor terms -->
+    <!-- Marker summary sorts -->
+   <field name="byMrkSymbol" type="int" indexed="true" stored="false"/>
+   <field name="byLocation" type="int" indexed="true" stored="false"/>
+
+    <!-- Assay level query fields -->
+   <field name="assayKey" type="string" indexed="true" stored="true" required="true" />
+
+
+    <!-- Assay summary fields -->
+   <field name="hasImage" type="boolean" indexed="false" stored="true" />
+
+    <!-- Assay summary sorts -->
+   <field name="byAssayMrkSymbol" type="int" indexed="true" stored="false"/>
+   <field name="byAssayAssayType" type="int" indexed="true" stored="false"/>
+    
+
+    <!-- Result level query fields -->
+   <field name="resultType" type="text" indexed="true" stored="false" required="true" />
+   <field name="resultKey" type="string" indexed="true" stored="true" required="true" />
+   <field name="uniqueKey" type="string" indexed="true" stored="true" required="true" />
+   <field name="assayType" type="string" indexed="true" stored="true" />
+   <field name="ageMin" type="float" indexed="true" stored="false" />
+   <field name="ageMax" type="float" indexed="true" stored="false" />
+   
+   <field name="theilerStage" type="int" indexed="true" stored="true" />
+   <field name="isExpressed" type="string" indexed="true" stored="false" />
+ 
+   <!-- unique grouping fields for the matrix views -->
+   <!-- Gxd TissuexStage matrix results only differ on these fields: structureId_detectionLevel_theilerStage -->
+   <field name="stageMatrixGroup" type="string" indexed="true" stored="true" />
+   <!-- Gxd TissuexGene matrix results only differ on these fields: structureId_detectionLevel_markerKey -->
+   <field name="geneMatrixGroup" type="string" indexed="true" stored="true" />
+	
+   <!-- change anatomy to anatomyNGram to enable prefix searching -->
+   <field name="structureAncestors" type="anatomy" indexed="true" stored="false" multiValued="true" />
+
+   <!-- is the EMAPA ID for the annotated structure -->
+   <field name="structureExact" type="lowercase" indexed="true" stored="true" />
+
+   <!-- EMAPS ID for the annotated structure (stage-specific) -->
+   <field name="emapsId" type="textTight" indexed="true" stored="false" required="false" multiValued="true" />
+
+   <!-- includes IDs of ancestor terms -->
+   <field name="structureId" type="string" indexed="true" stored="false" multiValued="true" />
+
+   <!-- includes annotated term key plus keys of ancestor terms -->
+   <field name="structureKey" type="string" indexed="true" stored="false" multiValued="true" />
+   <field name="annotatedStructureKey" type="string" indexed="true" stored="false" />
+   <field name="structureDescendants" type="anatomy" indexed="true" stored="false" multiValued="true" />
+   <field name="isWildType" type="string" indexed="true" stored="false" />
+   <field name="mutatedIn" type="nomen" indexed="true" stored="false" multiValued="true" />
+   <field name="alleleId" type="string" indexed="true" stored="false" multiValued="true" />
+
+    <!-- extra RNA-Seq display fields -->
+   <field name="tpmLevel" type="string" indexed="false" stored="true" />
+   <field name="biologicalReplicates" type="string" indexed="false" stored="true" />
+   <field name="strain" type="string" indexed="false" stored="true" />
+   <field name="sex" type="string" indexed="false" stored="true" />
+   <field name="notes" type="string" indexed="false" stored="true" />
+
+    <!-- result summary -->
+   <field name="assayMgiid" type="string" indexed="true" stored="true" />
+   <field name="anatomicalSystem" type="string" indexed="true" stored="true" multiValued="true"/>
+   <field name="age" type="string" indexed="false" stored="true" />
+   <field name="printname" type="string" indexed="false" stored="true" />
+   <field name="detectionLevel" type="string" indexed="true" stored="true" />
+   <field name="figure" type="string" indexed="false" stored="true" multiValued="true"/>
+   <field name="figurePlain" type="string" indexed="false" stored="true" multiValued="true"/>
+   <field name="genotype" type="string" indexed="false" stored="true" />
+   <field name="jNum" type="string" indexed="true" stored="true" />
+   <field name="pubmedId" type="string" indexed="false" stored="true" />
+   <field name="shortCitation" type="string" indexed="false" stored="true" />
+   <field name="pattern" type="string" indexed="false" stored="true" />
+
+    <!-- Result summary sorts -->
+   <field name="byResultAssayType" type="int" indexed="true" stored="false"/>
+   <field name="byResultMrkSymbol" type="int" indexed="true" stored="false"/>
+   <field name="byResultAge" type="int" indexed="true" stored="false"/>
+   <field name="byResultStructure" type="int" indexed="true" stored="false"/>
+   <field name="byResultExpressed" type="int" indexed="true" stored="false"/>
+   <field name="byResultMutantAlleles" type="int" indexed="true" stored="false"/>
+   <field name="byResultReference" type="int" indexed="true" stored="false"/>
+
+    <!-- Other level query fields -->
+   <field name="probeKey" type="string" indexed="true" stored="false"/>
+   <field name="antibodyKey" type="string" indexed="true" stored="false"/>
+
+    <!-- Fields for faceting by various vocabulary annotations (for filters) -->
    <field name="mpHeaders" type="string" indexed="true" stored="true" multiValued="true" required="false" />
    <field name="goHeaders" type="string" indexed="true" stored="true" multiValued="true" required="false" />
    <field name="doHeaders" type="string" indexed="true" stored="true" multiValued="true" required="false" />
    <field name="featureTypes" type="string" indexed="true" stored="true" multiValued="true" required="false" />
-
-   <!-- includes annotated IDs and their ancestor IDs for DO, GO, MP vocabs -->
-   <field name="annotation" type="string" indexed="true" stored="false" multiValued="true" required="false" />
 
    <!-- catchall field, containing all other searchable text fields (implemented
         via copyField further on in this schema  -->
@@ -603,15 +662,13 @@
    <dynamicField name="ignored_*" type="ignored" multiValued="true"/>
    <dynamicField name="attr_*" type="textgen" indexed="true" stored="true" multiValued="true"/>
 
-   <dynamicField name="random_*" type="random" />
+   <dynamicField name="random_*" type="random" indexed="true" stored="false" />
 
    <!-- uncomment the following to ignore any fields that don't already match an existing 
         field name or dynamic field, rather than reporting them as an error. 
         alternately, change the type="ignored" to some other type e.g. "text" if you want 
         unknown fields indexed and/or stored by default --> 
-    <!--
    <dynamicField name="*" type="text" multiValued="true" />
-    -->
    
  </fields>
 
@@ -633,6 +690,7 @@
 
    <!-- copy name to alphaNameSort, a field designed for sorting by name -->
    <!-- <copyField source="name" dest="alphaNameSort"/> -->
+<copyField source="markerSymbol" dest="markerSymbolLower"/>
  
 
  <!-- Similarity is the scoring routine for each document vs. a query.

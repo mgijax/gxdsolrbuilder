@@ -29,6 +29,9 @@
     If 'null' (or absent), cores will not be manageable via request handler
   -->
   <cores adminPath="/admin/cores">
+    <core name="gxdResult" instanceDir="gxdResult" >
+        <property name="dataDir" value="data" />
+    </core>
     <core name="gxdMarker" instanceDir="gxdMarker" >
         <property name="dataDir" value="data" />
     </core>
