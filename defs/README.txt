@@ -4,7 +4,7 @@ default/ subdirectory.
 The defs/default/ subdirectory contains the default files which are shared in
 common across all the Solr indexes.
 
-Each specific index's subdirectory (eg: defs/gxdMarker/) contains files in
+Each specific index's subdirectory (eg: defs/gxdResult/) contains files in
 addition to those in defs/default/ and/or those which should override those in
 defs/default/ for that particular index.
 

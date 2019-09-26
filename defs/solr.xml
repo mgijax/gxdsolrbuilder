@@ -32,7 +32,10 @@
     <core name="gxdResult" instanceDir="gxdResult" >
         <property name="dataDir" value="data" />
     </core>
-    <core name="gxdMarker" instanceDir="gxdMarker" >
+    <core name="gxdImagePane" instanceDir="gxdImagePane" >
+        <property name="dataDir" value="data" />
+    </core>
+    <core name="gxdDifferentialMarker" instanceDir="gxdDifferentialMarker" >
         <property name="dataDir" value="data" />
     </core>
   </cores>
