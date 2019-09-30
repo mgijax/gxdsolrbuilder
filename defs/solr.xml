@@ -38,5 +38,8 @@
     <core name="gxdDifferentialMarker" instanceDir="gxdDifferentialMarker" >
         <property name="dataDir" value="data" />
     </core>
+    <core name="gxdDagEdge" instanceDir="gxdDagEdge" >
+        <property name="dataDir" value="data" />
+    </core>
   </cores>
 </solr>
