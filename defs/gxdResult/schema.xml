@@ -542,7 +542,7 @@
 
 
     <!-- Assay summary fields -->
-   <field name="hasImage" type="boolean" indexed="false" stored="true" />
+   <field name="hasImage" type="boolean" indexed="true" stored="true" />
 
     <!-- Assay summary sorts -->
    <field name="byAssayMrkSymbol" type="int" indexed="true" stored="false"/>
