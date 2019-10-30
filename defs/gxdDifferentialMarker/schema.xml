@@ -480,6 +480,7 @@
     <!-- result summary -->
    <field name="uniqueKey" type="string" indexed="true" stored="false" required="true" />
    <field name="markerKey" type="int" indexed="true" stored="true" required="true" />
+   <field name="markerMgiid" type="string" indexed="true" stored="true" />
 
     <!-- positive structure and ts combination for doing differential search includes term + ancestors -->
    <field name="posAnc" type="anatomy" indexed="true" stored="false" multiValued="true" />
