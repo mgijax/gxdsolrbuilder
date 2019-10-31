@@ -622,7 +622,9 @@
 
     <!-- Fields for faceting by various vocabulary annotations (for filters) -->
    <field name="mpHeaders" type="string" indexed="true" stored="true" multiValued="true" required="false" />
-   <field name="goHeaders" type="string" indexed="true" stored="true" multiValued="true" required="false" />
+   <field name="goHeadersBP" type="string" indexed="true" stored="true" multiValued="true" required="false" />
+   <field name="goHeadersCC" type="string" indexed="true" stored="true" multiValued="true" required="false" />
+   <field name="goHeadersMF" type="string" indexed="true" stored="true" multiValued="true" required="false" />
    <field name="doHeaders" type="string" indexed="true" stored="true" multiValued="true" required="false" />
    <field name="featureTypes" type="string" indexed="true" stored="true" multiValued="true" required="false" />
 
