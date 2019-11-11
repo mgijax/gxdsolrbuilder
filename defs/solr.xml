@@ -32,6 +32,9 @@
     <core name="gxdResult" instanceDir="gxdResult" >
         <property name="dataDir" value="data" />
     </core>
+    <core name="gxdResultHasImage" instanceDir="gxdResultHasImage" >
+        <property name="dataDir" value="data" />
+    </core>
     <core name="gxdImagePane" instanceDir="gxdImagePane" >
         <property name="dataDir" value="data" />
     </core>
