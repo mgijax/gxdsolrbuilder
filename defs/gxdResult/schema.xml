@@ -588,6 +588,7 @@
 
     <!-- extra RNA-Seq display fields -->
    <field name="tpmLevel" type="string" indexed="false" stored="true" />
+   <field name="avgQnTpmLevel" type="string" indexed="false" stored="true" />
    <field name="biologicalReplicates" type="string" indexed="false" stored="true" />
    <field name="strain" type="string" indexed="false" stored="true" />
    <field name="sex" type="string" indexed="false" stored="true" />
