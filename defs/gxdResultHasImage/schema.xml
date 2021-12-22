@@ -606,6 +606,7 @@
    <field name="pubmedId" type="string" indexed="false" stored="true" />
    <field name="shortCitation" type="string" indexed="false" stored="true" />
    <field name="pattern" type="string" indexed="false" stored="true" />
+   <field name="cellType" type="string" indexed="false" stored="true" />
 
     <!-- Result summary sorts -->
    <field name="byResultAssayType" type="int" indexed="true" stored="false"/>
